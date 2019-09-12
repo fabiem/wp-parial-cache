@@ -112,6 +112,7 @@ function save_cache()
   $cache = ob_get_clean();
   echo '<!-- no cache -->';
   echo $cache;
+  if(!is_dir(get_home_path().'wp-content/partialcache')) mkdir(get_home_path().'wp-content/partialcache');
   if (!is_dir($GLOBALS['pathtopartialcachedir'])) mkdir($GLOBALS['pathtopartialcachedir']);
   file_put_contents($GLOBALS['pathtopartialcache'], $cache);
   echo '<!-- cache saved -->';
