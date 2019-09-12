@@ -39,7 +39,7 @@ function has_no_cache($section, $time = 120, $user = false, $page = null)
   $file = hash('sha256', $file);
 
 
-  $GLOBALS['pathtopartialcachedir'] = get_home_path().'wp-content/partialcache/'.$folder;
+  $GLOBALS['pathtopartialcachedir'] = partial_cache_dir().$folder;
   $GLOBALS['pathtopartialcache'] = $GLOBALS['pathtopartialcachedir'].'/'.$file.$GLOBALS['partialcacheversion'];
 
   if(isset($_GET['clearcache']))
@@ -97,12 +97,23 @@ function deleteDirectory($dir) {
     return rmdir($dir);
 }
 
+function partial_cache_dir()
+{
+  if(!isset($GLOBLAS['partialcachedir']))
+  {
+    $dir = wp_upload_dir();
+    $dir = str_replace('uploads', 'wp-partial-cache');
+    $GLOBLAS['partialcachedir'] = $dir;
+  }
+
+  return $GLOBLAS['partialcachedir'];
+}
 
 function purge_cache($url)
 {
 
   $folder = hash('sha256', $url);
-  $folder = get_home_path().'wp-content/partialcache/'.$folder;
+  $folder = partial_cache_dir().$folder;
   deleteDirectory($folder);
 }
 
@@ -112,7 +123,7 @@ function save_cache()
   $cache = ob_get_clean();
   echo '<!-- no cache -->';
   echo $cache;
-  if(!is_dir(get_home_path().'wp-content/partialcache')) mkdir(get_home_path().'wp-content/partialcache');
+  if(!is_dir(partial_cache_dir())) mkdir(partial_cache_dir());
   if (!is_dir($GLOBALS['pathtopartialcachedir'])) mkdir($GLOBALS['pathtopartialcachedir']);
   file_put_contents($GLOBALS['pathtopartialcache'], $cache);
   echo '<!-- cache saved -->';
