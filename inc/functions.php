@@ -1,17 +1,9 @@
 <?php
-/**
-* Plugin Name: WP Partial Cache
-* Plugin URI: https://github.com/fabiem/wp-partial-cache
-* Description: WP cache plug for developper
-* Version: 1.0
-* Author: Fabien MOTTA
-* Author URI: https://fabienmotta.com
-**/
-
 
 
 function has_no_cache($section, $time = 120, $user = false, $page = null)
 {
+  if(isset($_GET['nocache'])) return true;
 
   if(function_exists('get_current_version'))
   {
@@ -23,6 +15,12 @@ function has_no_cache($section, $time = 120, $user = false, $page = null)
   }
 
   if($page == null)
+  {
+    $uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
+    $uri = $uri_parts[0];
+    $page = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://{$_SERVER['HTTP_HOST']}{$uri}";
+  }
+  elseif($page === true)
   {
     $page = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
   }
@@ -140,7 +138,7 @@ function purge_cache($url, $section = '*')
     $folder = hash('sha256', $url);
     $folder = partial_cache_dir().'/'.$folder;
     deleteDirectory($folder);
-    
+
   }
   else
   {
@@ -157,6 +155,7 @@ function purge_cache($url, $section = '*')
 
 function save_cache()
 {
+  if(isset($_GET['nocache'])) return false;
   $cache = ob_get_clean();
   echo '<!-- no cache -->';
   echo $cache;

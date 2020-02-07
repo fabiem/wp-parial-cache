@@ -3,7 +3,7 @@
 * Plugin Name: WP Partial Cache
 * Plugin URI: https://github.com/fabiem/wp-partial-cache
 * Description: WP cache plug for developper
-* Version: 1.1
+* Version: 1.1.1
 * Author: Fabien MOTTA
 * Author URI: https://fabienmotta.com
 **/
